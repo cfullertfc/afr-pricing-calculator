@@ -6,7 +6,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const PASS_HASH = "cfuller19!";
+const PASS_HASH = "446e60633f982ea867a94244db0fa4279977f91efa14d82da61286dea21ead76";
+
+async function hashPassword(password: string): Promise<string> {
+  const encoded = new TextEncoder().encode(password);
+  const buffer = await crypto.subtle.digest("SHA-256", encoded);
+  return Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 export default function PasswordGate({ children }: { children: React.ReactNode }) {
   const [unlocked, setUnlocked] = useState(false);
@@ -21,9 +29,10 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === PASS_HASH) {
+    const hashed = await hashPassword(password);
+    if (hashed === PASS_HASH) {
       localStorage.setItem("afr-unlocked", "true");
       setUnlocked(true);
     } else {
