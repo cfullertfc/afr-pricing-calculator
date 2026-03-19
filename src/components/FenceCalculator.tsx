@@ -41,9 +41,10 @@ const CONDITION_OPTIONS = [
 const STAIN_COST_PER_BUCKET = 190;
 const OIL_COVERAGE = 140;
 const WATER_COVERAGE = 165;
-const FARM_COVERAGE = 16;
+const FARM_COVERAGE = 26;
 const LABOR_PER_DAY = 340;
 const LF_PER_DAY = 400;
+const FARM_LF_PER_DAY = 2000;
 const CLEANING_RATE = 0.25;
 const CLEANING_MINIMUM = 680;
 const POOL_MASKING_COST = 250;
@@ -191,7 +192,8 @@ export default function FenceCalculator() {
   const stainCost = buckets * STAIN_COST_PER_BUCKET;
 
   // Labor
-  const autoLaborDays = linearFeet > 0 ? Math.ceil(linearFeet / LF_PER_DAY) : 1;
+  const lfPerDay = farm ? FARM_LF_PER_DAY : LF_PER_DAY;
+  const autoLaborDays = linearFeet > 0 ? Math.ceil(linearFeet / lfPerDay) : 1;
   const totalLaborDays = Math.max(autoLaborDays, 1) + additionalLaborDays;
   const laborCost = totalLaborDays * LABOR_PER_DAY;
 

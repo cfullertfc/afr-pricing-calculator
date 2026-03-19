@@ -111,7 +111,8 @@ function ResultRow({
 }
 
 export default function DeckCalculator() {
-  const [floorSqFt, setFloorSqFt] = useState(0);
+  const [deckLength, setDeckLength] = useState(0);
+  const [deckWidth, setDeckWidth] = useState(0);
   const [railingLf, setRailingLf] = useState(0);
   const [numSteps, setNumSteps] = useState(0);
   const [numPosts, setNumPosts] = useState(0);
@@ -127,6 +128,8 @@ export default function DeckCalculator() {
   useEffect(() => {
     if (prevStained) setOilBased(false);
   }, [prevStained]);
+
+  const floorSqFt = deckLength * deckWidth;
 
   // Stain
   const gallonsNeeded = floorSqFt / DECK_COVERAGE;
@@ -168,7 +171,7 @@ export default function DeckCalculator() {
     const lines = [
       "AFR Stain & Seal — Quick Quote",
       "",
-      `Deck: ${floorSqFt} sq ft floor`,
+      `Deck: ${deckLength}x${deckWidth} (${floorSqFt} sq ft)`,
     ];
     if (railingLf > 0) lines.push(`Railing: ${railingLf} LF`);
     if (numSteps > 0) lines.push(`Steps: ${numSteps}`);
@@ -190,7 +193,7 @@ export default function DeckCalculator() {
     );
     return lines.join("\n");
   }, [
-    floorSqFt, railingLf, numSteps, numPosts, twoStory, stainLabel, buckets,
+    deckLength, deckWidth, floorSqFt, railingLf, numSteps, numPosts, twoStory, stainLabel, buckets,
     roundedGallons, stainCost, laborCost, totalLaborDays, includeCleaning,
     cleaningPrice, poolMasking, poolCost, miscUpcharge, totalCost, totalPrice,
     grossProfit, grossMargin,
@@ -212,17 +215,33 @@ export default function DeckCalculator() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="floor-sqft">Floor Square Footage</Label>
-              <Input
-                id="floor-sqft"
-                type="number"
-                inputMode="decimal"
-                min={0}
-                value={floorSqFt || ""}
-                placeholder="0"
-                onChange={(e) => setFloorSqFt(Number(e.target.value) || 0)}
-                className="text-lg h-12"
-              />
+              <Label>Deck Dimensions</Label>
+              <div className="flex items-center gap-3">
+                <Input
+                  id="deck-length"
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  value={deckLength || ""}
+                  placeholder="Length"
+                  onChange={(e) => setDeckLength(Number(e.target.value) || 0)}
+                  className="text-lg h-12"
+                />
+                <span className="text-muted-foreground font-medium text-lg">x</span>
+                <Input
+                  id="deck-width"
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  value={deckWidth || ""}
+                  placeholder="Width"
+                  onChange={(e) => setDeckWidth(Number(e.target.value) || 0)}
+                  className="text-lg h-12"
+                />
+              </div>
+              {floorSqFt > 0 && (
+                <p className="text-sm text-muted-foreground">{floorSqFt} sq ft</p>
+              )}
             </div>
 
             <div className="space-y-2">
