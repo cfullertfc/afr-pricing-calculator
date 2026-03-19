@@ -4,9 +4,11 @@ import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FenceCalculator from "@/components/FenceCalculator";
 import DeckCalculator from "@/components/DeckCalculator";
+import PasswordGate from "@/components/PasswordGate";
 
 export default function Home() {
   return (
+    <PasswordGate>
     <main className="min-h-screen pb-12 bg-white">
       {/* Header */}
       <div className="bg-afr-navy">
@@ -51,5 +53,6 @@ export default function Home() {
         </Tabs>
       </div>
     </main>
+    </PasswordGate>
   );
 }
