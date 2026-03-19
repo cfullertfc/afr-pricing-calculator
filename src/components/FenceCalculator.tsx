@@ -425,7 +425,11 @@ export default function FenceCalculator() {
               <ResultRow label="Total Square Footage" value={sqFt.toLocaleString() + " sq ft"} />
             )}
             <ResultRow
-              label="Gallons of Stain"
+              label="Exact Gallons Needed"
+              value={`${gallonsNeeded.toFixed(1)} gal`}
+            />
+            <ResultRow
+              label="Rounded (5-gal buckets)"
               value={`${roundedGallons} gal (${buckets} bucket${buckets !== 1 ? "s" : ""})`}
             />
             <ResultRow label="Stain Cost" value={fmt(stainCost)} />
