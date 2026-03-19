@@ -5,29 +5,29 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #0f1923;
-  --foreground: #e8ecf0;
-  --card: #1a2836;
-  --card-foreground: #e8ecf0;
-  --popover: #1a2836;
-  --popover-foreground: #e8ecf0;
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
   --primary: #EE3C3E;
   --primary-foreground: #ffffff;
-  --secondary: #1e3044;
-  --secondary-foreground: #e8ecf0;
-  --muted: #1e3044;
-  --muted-foreground: #8899aa;
-  --accent: #2B3D53;
-  --accent-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f5f5f5;
+  --muted-foreground: #6b7280;
+  --accent: #f5f5f5;
+  --accent-foreground: #1a1a1a;
   --destructive: #f87171;
-  --border: #2B3D53;
-  --input: #2B3D53;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
   --ring: #EE3C3E;
   --radius: 0.75rem;
 
-  --color-success: #4ade80;
-  --color-warning: #fbbf24;
-  --color-danger: #f87171;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
   --color-afr-red: #EE3C3E;
   --color-afr-red-hover: #d93537;
   --color-afr-navy: #2B3D53;

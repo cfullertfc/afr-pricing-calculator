@@ -59,8 +59,8 @@ function ToggleButtons({
           onClick={() => onChange(false)}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
             !value
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-muted-foreground hover:text-foreground"
+              ? "bg-afr-navy text-white"
+              : "bg-gray-100 text-gray-500 hover:text-gray-700"
           }`}
         >
           {optionA}
@@ -70,8 +70,8 @@ function ToggleButtons({
           onClick={() => onChange(true)}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
             value
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-muted-foreground hover:text-foreground"
+              ? "bg-afr-navy text-white"
+              : "bg-gray-100 text-gray-500 hover:text-gray-700"
           }`}
         >
           {optionB}
@@ -208,7 +208,7 @@ export default function DeckCalculator() {
       <div className="space-y-4">
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-afr-red">Deck Details</CardTitle>
+            <CardTitle className="text-afr-navy">Deck Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -279,7 +279,7 @@ export default function DeckCalculator() {
 
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-afr-red">Stain & Options</CardTitle>
+            <CardTitle className="text-afr-navy">Stain & Options</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between py-1">
@@ -340,7 +340,7 @@ export default function DeckCalculator() {
       <div className="space-y-4">
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-afr-red">Stain Estimate</CardTitle>
+            <CardTitle className="text-afr-navy">Stain Estimate</CardTitle>
           </CardHeader>
           <CardContent>
             <ResultRow
@@ -359,7 +359,7 @@ export default function DeckCalculator() {
 
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-afr-red">Price Breakdown</CardTitle>
+            <CardTitle className="text-afr-navy">Price Breakdown</CardTitle>
           </CardHeader>
           <CardContent>
             <ResultRow label="Floor Staining" value={fmt(floorPrice)} />
@@ -375,7 +375,7 @@ export default function DeckCalculator() {
           </CardContent>
         </Card>
 
-        <Card className="border-afr-red/40 bg-afr-red/5">
+        <Card className="border-afr-navy/30 bg-afr-navy/5">
           <CardContent className="pt-6">
             <ResultRow label="Price to Customer" value={fmt(totalPrice)} bold large />
             <Separator className="my-2" />

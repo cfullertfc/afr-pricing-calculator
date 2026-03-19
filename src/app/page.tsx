@@ -7,9 +7,9 @@ import DeckCalculator from "@/components/DeckCalculator";
 
 export default function Home() {
   return (
-    <main className="min-h-screen pb-12">
+    <main className="min-h-screen pb-12 bg-white">
       {/* Header */}
-      <div className="bg-afr-navy border-b border-border">
+      <div className="bg-afr-navy">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-4">
           <Image
             src="/afr-logo.png"
@@ -20,7 +20,7 @@ export default function Home() {
           />
           <div>
             <h1 className="text-xl font-bold text-white">Quick Pricing Calculator</h1>
-            <p className="text-sm text-muted-foreground">AFR Stain & Seal LLC</p>
+            <p className="text-sm text-gray-300">AFR Stain & Seal LLC</p>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@ export default function Home() {
       {/* Calculator */}
       <div className="max-w-5xl mx-auto px-4 pt-6">
         <Tabs defaultValue="fence" className="w-full">
-          <TabsList className="w-full h-14 bg-afr-navy/50 p-1">
+          <TabsList className="w-full h-14 bg-gray-100 p-1">
             <TabsTrigger
               value="fence"
               className="flex-1 h-full text-lg data-[state=active]:bg-afr-red data-[state=active]:text-white"

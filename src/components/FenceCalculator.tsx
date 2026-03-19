@@ -91,8 +91,8 @@ function ToggleButtons({
           onClick={() => onChange(false)}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
             !value
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-muted-foreground hover:text-foreground"
+              ? "bg-afr-navy text-white"
+              : "bg-gray-100 text-gray-500 hover:text-gray-700"
           }`}
         >
           {optionA}
@@ -102,8 +102,8 @@ function ToggleButtons({
           onClick={() => onChange(true)}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
             value
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-muted-foreground hover:text-foreground"
+              ? "bg-afr-navy text-white"
+              : "bg-gray-100 text-gray-500 hover:text-gray-700"
           }`}
         >
           {optionB}
@@ -265,7 +265,7 @@ export default function FenceCalculator() {
       <div className="space-y-4">
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-afr-red">Fence Details</CardTitle>
+            <CardTitle className="text-afr-navy">Fence Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -330,7 +330,7 @@ export default function FenceCalculator() {
 
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-afr-red">Stain & Condition</CardTitle>
+            <CardTitle className="text-afr-navy">Stain & Condition</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ToggleButtons
@@ -373,7 +373,7 @@ export default function FenceCalculator() {
 
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-afr-red">Extras</CardTitle>
+            <CardTitle className="text-afr-navy">Extras</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between py-1">
@@ -416,7 +416,7 @@ export default function FenceCalculator() {
       <div className="space-y-4">
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-afr-red">Cost Breakdown</CardTitle>
+            <CardTitle className="text-afr-navy">Cost Breakdown</CardTitle>
           </CardHeader>
           <CardContent>
             {!farm && (
@@ -439,7 +439,7 @@ export default function FenceCalculator() {
           </CardContent>
         </Card>
 
-        <Card className="border-afr-red/40 bg-afr-red/5">
+        <Card className="border-afr-navy/30 bg-afr-navy/5">
           <CardContent className="pt-6">
             <ResultRow label="Price to Customer" value={fmt(priceToCustomer)} bold large />
             <Separator className="my-2" />
