@@ -3,8 +3,8 @@
   "short_name": "AFR Calculator",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1410",
-  "theme_color": "#1a1410",
+  "background_color": "#0f1923",
+  "theme_color": "#0f1923",
   "icons": [
     {
       "src": "/icon-192.png",

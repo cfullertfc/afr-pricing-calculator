@@ -1,17 +1,20 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  NumberInput,
   Select,
-  Toggle,
-  ToggleSwitch,
-  ResultRow,
-  Divider,
-  Card,
-  fmt,
-  pct,
-} from "./ui";
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type FenceType = "standard_privacy" | "shadow_box" | "3_rail" | "4_rail";
 type Condition = "new" | "good" | "weathered";
@@ -38,7 +41,7 @@ const CONDITION_OPTIONS = [
 const STAIN_COST_PER_BUCKET = 190;
 const OIL_COVERAGE = 140;
 const WATER_COVERAGE = 165;
-const FARM_COVERAGE = 16; // 1 gal per 16 LF
+const FARM_COVERAGE = 16;
 const LABOR_PER_DAY = 340;
 const LF_PER_DAY = 400;
 const CLEANING_RATE = 0.25;
@@ -51,6 +54,94 @@ function isFarm(type: FenceType) {
 
 function roundUpTo5(gallons: number): number {
   return Math.ceil(gallons / 5) * 5;
+}
+
+function fmt(n: number): string {
+  return n.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+}
+
+function pct(n: number): string {
+  return (n * 100).toFixed(1) + "%";
+}
+
+function ToggleButtons({
+  label,
+  optionA,
+  optionB,
+  value,
+  onChange,
+}: {
+  label: string;
+  optionA: string;
+  optionB: string;
+  value: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="flex rounded-lg overflow-hidden border border-border">
+        <button
+          type="button"
+          onClick={() => onChange(false)}
+          className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+            !value
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {optionA}
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange(true)}
+          className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+            value
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {optionB}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ResultRow({
+  label,
+  value,
+  bold,
+  large,
+  warning,
+  success,
+}: {
+  label: string;
+  value: string;
+  bold?: boolean;
+  large?: boolean;
+  warning?: boolean;
+  success?: boolean;
+}) {
+  return (
+    <div
+      className={`flex justify-between items-center py-2 ${bold ? "font-semibold" : ""}`}
+    >
+      <span className={large ? "text-lg" : ""}>{label}</span>
+      <span
+        className={`text-right ${bold ? "font-bold" : ""} ${large ? "text-xl" : ""} ${
+          warning ? "text-warning" : ""
+        } ${success ? "text-success" : ""}`}
+      >
+        {value}
+      </span>
+    </div>
+  );
 }
 
 export default function FenceCalculator() {
@@ -67,12 +158,10 @@ export default function FenceCalculator() {
   const [additionalLaborDays, setAdditionalLaborDays] = useState(0);
   const [copied, setCopied] = useState(false);
 
-  // When "previously stained" is toggled on, default to water-based
   useEffect(() => {
     if (prevStained) setOilBased(false);
   }, [prevStained]);
 
-  // When condition is weathered, auto-enable cleaning
   useEffect(() => {
     if (condition === "weathered") setIncludeCleaning(true);
   }, [condition]);
@@ -109,15 +198,12 @@ export default function FenceCalculator() {
   // Cleaning
   let cleaningCost = 0;
   if (includeCleaning) {
-    const cleaningSqFt = farm ? linearFeet * h * (bothSides ? 2 : 1) : sqFt;
+    const cleaningSqFt = farm ? linearFeet * h : sqFt;
     const rateBasedCost = cleaningSqFt * CLEANING_RATE;
     cleaningCost = Math.max(rateBasedCost, CLEANING_MINIMUM);
   }
 
-  // Pool masking
   const poolCost = poolMasking ? POOL_MASKING_COST : 0;
-
-  // Totals
   const totalCost = stainCost + laborCost + cleaningCost + poolCost + miscUpcharge;
 
   let priceToCustomer = 0;
@@ -137,8 +223,7 @@ export default function FenceCalculator() {
 
   const marginWarning = farm && grossMargin < 0.5 && linearFeet > 0;
 
-  const fenceLabel =
-    FENCE_TYPE_OPTIONS.find((o) => o.value === fenceType)?.label ?? "";
+  const fenceLabel = FENCE_TYPE_OPTIONS.find((o) => o.value === fenceType)?.label ?? "";
   const stainLabel = oilBased ? "Oil-Based" : "Water-Based Solid";
   const sidesLabel = bothSides ? "Both Sides" : "One Side";
 
@@ -179,17 +264,42 @@ export default function FenceCalculator() {
       {/* INPUTS */}
       <div className="space-y-4">
         <Card>
-          <h2 className="text-lg font-semibold mb-4 text-accent">Fence Details</h2>
-          <div className="space-y-4">
-            <NumberInput label="Linear Feet" value={linearFeet} onChange={setLinearFeet} />
-            <Select
-              label="Fence Type"
-              value={fenceType}
-              onChange={(v) => setFenceType(v as FenceType)}
-              options={FENCE_TYPE_OPTIONS}
-            />
+          <CardHeader className="pb-4">
+            <CardTitle className="text-afr-red">Fence Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="linear-feet">Linear Feet</Label>
+              <Input
+                id="linear-feet"
+                type="number"
+                inputMode="decimal"
+                min={0}
+                value={linearFeet || ""}
+                placeholder="0"
+                onChange={(e) => setLinearFeet(Number(e.target.value) || 0)}
+                className="text-lg h-12"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Fence Type</Label>
+              <Select value={fenceType} onValueChange={(v) => { if (v) setFenceType(v as FenceType); }}>
+                <SelectTrigger className="h-12 text-lg">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {FENCE_TYPE_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {showSides && (
-              <Toggle
+              <ToggleButtons
                 label="Sides"
                 optionA="One Side"
                 optionB="Both Sides"
@@ -197,84 +307,167 @@ export default function FenceCalculator() {
                 onChange={setBothSides}
               />
             )}
+
             {showHeight && (
-              <Select label="Height" value={height} onChange={setHeight} options={HEIGHT_OPTIONS} />
+              <div className="space-y-2">
+                <Label>Height</Label>
+                <Select value={height} onValueChange={(v) => { if (v) setHeight(v); }}>
+                  <SelectTrigger className="h-12 text-lg">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {HEIGHT_OPTIONS.map((o) => (
+                      <SelectItem key={o.value} value={o.value}>
+                        {o.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             )}
-          </div>
+          </CardContent>
         </Card>
 
         <Card>
-          <h2 className="text-lg font-semibold mb-4 text-accent">Stain & Condition</h2>
-          <div className="space-y-4">
-            <Toggle
+          <CardHeader className="pb-4">
+            <CardTitle className="text-afr-red">Stain & Condition</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ToggleButtons
               label="Stain Type"
               optionA="Oil-Based"
               optionB="Water-Based Solid"
               value={!oilBased}
               onChange={(v) => setOilBased(!v)}
             />
-            <ToggleSwitch label="Previously Stained?" checked={prevStained} onChange={setPrevStained} />
+
+            <div className="flex items-center justify-between py-1">
+              <Label htmlFor="prev-stained">Previously Stained?</Label>
+              <Switch id="prev-stained" checked={prevStained} onCheckedChange={setPrevStained} />
+            </div>
+
             {!farm && (
-              <Select
-                label="Condition"
-                value={condition}
-                onChange={(v) => setCondition(v as Condition)}
-                options={CONDITION_OPTIONS}
-              />
+              <div className="space-y-2">
+                <Label>Condition</Label>
+                <Select value={condition} onValueChange={(v) => { if (v) setCondition(v as Condition); }}>
+                  <SelectTrigger className="h-12 text-lg">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CONDITION_OPTIONS.map((o) => (
+                      <SelectItem key={o.value} value={o.value}>
+                        {o.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             )}
-            <ToggleSwitch label="Include Cleaning?" checked={includeCleaning} onChange={setIncludeCleaning} />
-          </div>
+
+            <div className="flex items-center justify-between py-1">
+              <Label htmlFor="cleaning">Include Cleaning?</Label>
+              <Switch id="cleaning" checked={includeCleaning} onCheckedChange={setIncludeCleaning} />
+            </div>
+          </CardContent>
         </Card>
 
         <Card>
-          <h2 className="text-lg font-semibold mb-4 text-accent">Extras</h2>
-          <div className="space-y-4">
-            <ToggleSwitch label="Pool Masking (+$250)" checked={poolMasking} onChange={setPoolMasking} />
-            <NumberInput label="Miscellaneous Upcharge" value={miscUpcharge} onChange={setMiscUpcharge} placeholder="$0" />
-            <NumberInput label="Additional Labor Days" value={additionalLaborDays} onChange={setAdditionalLaborDays} />
-          </div>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-afr-red">Extras</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between py-1">
+              <Label htmlFor="pool-masking">Pool Masking (+$250)</Label>
+              <Switch id="pool-masking" checked={poolMasking} onCheckedChange={setPoolMasking} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="misc">Miscellaneous Upcharge</Label>
+              <Input
+                id="misc"
+                type="number"
+                inputMode="decimal"
+                min={0}
+                value={miscUpcharge || ""}
+                placeholder="$0"
+                onChange={(e) => setMiscUpcharge(Number(e.target.value) || 0)}
+                className="text-lg h-12"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="extra-labor">Additional Labor Days</Label>
+              <Input
+                id="extra-labor"
+                type="number"
+                inputMode="decimal"
+                min={0}
+                value={additionalLaborDays || ""}
+                placeholder="0"
+                onChange={(e) => setAdditionalLaborDays(Number(e.target.value) || 0)}
+                className="text-lg h-12"
+              />
+            </div>
+          </CardContent>
         </Card>
       </div>
 
       {/* RESULTS */}
       <div className="space-y-4">
-        <Card className="border-accent/30">
-          <h2 className="text-lg font-semibold mb-4 text-accent">Cost Breakdown</h2>
-          {!farm && <ResultRow label="Total Square Footage" value={sqFt.toLocaleString() + " sq ft"} />}
-          <ResultRow label="Gallons of Stain" value={`${roundedGallons} gal (${buckets} bucket${buckets !== 1 ? "s" : ""})`} />
-          <ResultRow label="Stain Cost" value={fmt(stainCost)} />
-          <ResultRow label={`Labor (${totalLaborDays} day${totalLaborDays !== 1 ? "s" : ""})`} value={fmt(laborCost)} />
-          {includeCleaning && <ResultRow label="Cleaning" value={fmt(cleaningCost)} />}
-          {poolMasking && <ResultRow label="Pool Masking" value={fmt(poolCost)} />}
-          {miscUpcharge > 0 && <ResultRow label="Misc Upcharge" value={fmt(miscUpcharge)} />}
-          <Divider />
-          <ResultRow label="Total Cost" value={fmt(totalCost)} bold />
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-afr-red">Cost Breakdown</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!farm && (
+              <ResultRow label="Total Square Footage" value={sqFt.toLocaleString() + " sq ft"} />
+            )}
+            <ResultRow
+              label="Gallons of Stain"
+              value={`${roundedGallons} gal (${buckets} bucket${buckets !== 1 ? "s" : ""})`}
+            />
+            <ResultRow label="Stain Cost" value={fmt(stainCost)} />
+            <ResultRow
+              label={`Labor (${totalLaborDays} day${totalLaborDays !== 1 ? "s" : ""})`}
+              value={fmt(laborCost)}
+            />
+            {includeCleaning && <ResultRow label="Cleaning" value={fmt(cleaningCost)} />}
+            {poolMasking && <ResultRow label="Pool Masking" value={fmt(poolCost)} />}
+            {miscUpcharge > 0 && <ResultRow label="Misc Upcharge" value={fmt(miscUpcharge)} />}
+            <Separator className="my-2" />
+            <ResultRow label="Total Cost" value={fmt(totalCost)} bold />
+          </CardContent>
         </Card>
 
-        <Card className="bg-accent/10 border-accent/40">
-          <ResultRow label="Price to Customer" value={fmt(priceToCustomer)} bold large />
-          <Divider />
-          <ResultRow label="Gross Profit" value={fmt(grossProfit)} bold success={grossProfit > 0} warning={grossProfit <= 0} />
-          <ResultRow
-            label="Gross Margin"
-            value={pct(grossMargin)}
-            bold
-            success={grossMargin >= 0.5}
-            warning={grossMargin < 0.5 && grossMargin >= 0}
-          />
-          {marginWarning && (
-            <p className="text-warning text-sm mt-2 font-medium">
-              ⚠ Margin below 50% — review pricing
-            </p>
-          )}
+        <Card className="border-afr-red/40 bg-afr-red/5">
+          <CardContent className="pt-6">
+            <ResultRow label="Price to Customer" value={fmt(priceToCustomer)} bold large />
+            <Separator className="my-2" />
+            <ResultRow
+              label="Gross Profit"
+              value={fmt(grossProfit)}
+              bold
+              success={grossProfit > 0}
+              warning={grossProfit <= 0}
+            />
+            <ResultRow
+              label="Gross Margin"
+              value={pct(grossMargin)}
+              bold
+              success={grossMargin >= 0.5}
+              warning={grossMargin < 0.5}
+            />
+            {marginWarning && (
+              <Badge variant="outline" className="mt-2 text-warning border-warning">
+                Warning: Margin below 50%
+              </Badge>
+            )}
+          </CardContent>
         </Card>
 
-        <button
-          onClick={copySummary}
-          className="w-full py-3 px-4 bg-accent hover:bg-accent-hover text-white font-medium rounded-lg transition-colors text-lg"
-        >
+        <Button onClick={copySummary} className="w-full h-12 text-lg bg-afr-red hover:bg-afr-red-hover text-white">
           {copied ? "Copied!" : "Copy Summary"}
-        </button>
+        </Button>
       </div>
     </div>
   );
